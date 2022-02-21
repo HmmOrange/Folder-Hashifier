@@ -18,5 +18,5 @@ target_code = {
 }
 ```
 ### 3. Khi script chạy xong, các file có thể chứa code như đã cho sẽ được show ở trong cmd/terminal:<br>
-![Ví dụ]("VD.png")
+![Ví dụ](VD.png)
 
