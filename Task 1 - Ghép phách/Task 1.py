@@ -4,12 +4,15 @@ import os
 import shutil
 import random
 import xlsxwriter #pip install xlsxwriter
+from datetime import datetime
 
+start_time = datetime.now()
 source_folder = r"C:\Users\Admin\Documents\Participants Code"
 destination_folder = r"C:\Users\Admin\Documents\Hashed Folders"
 
 # Duplicating folders
 def duplicating():
+    print(f"Duplicating folders...")
     try:
         # dirs_exist_ok verifies correct source folder
         shutil.copytree(source_folder, destination_folder, dirs_exist_ok = True)
@@ -38,6 +41,7 @@ def hashing():
         'align': "center"
     })
 
+    # Writing sheets
     log_ws.write(0, 0, "STT", cell_format_1)
     log_ws.write(0, 1, "SBD", cell_format_1)
     log_ws.write(0, 2, "Phách", cell_format_1)
@@ -52,6 +56,9 @@ def hashing():
             log_ws.write(row, col + 1, subdir, cell_format_2)
             row += 1
 
+    
+    print(f"Hashing files...")
+
     # Generating hashed folders' names
     for i in range(1, len(folders_dir_list) + 1):
         hashed_names_list.append("P{0:03d}".format(i))
@@ -59,18 +66,26 @@ def hashing():
     random.shuffle(hashed_names_list)
 
     # Renaming folders
-    row, col = 1, 2
-    cur_count = 0
-    for dir in folders_dir_list:
-        new_name = hashed_names_list[cur_count]
-        os.rename(dir, f"{destination_folder}\{new_name}")
-        log_ws.write(row, col, new_name, cell_format_2)
-        row += 1
-        cur_count += 1
-    print("✓ Folders hashed successfully.")
+    try:
+        row, col = 1, 2
+        cur_count = 0
+        for dir in folders_dir_list:
+            new_name = hashed_names_list[cur_count]
+            os.rename(dir, f"{destination_folder}\{new_name}")
+            log_ws.write(row, col, new_name, cell_format_2)
+            row += 1
+            cur_count += 1
+        print("✓ Folders hashed successfully.")
 
-    log_wb.close()
-    print("✓ Hash log XLSX created successfully.")
+        log_wb.close()
+        print("✓ Hash log XLSX created successfully.")
+    except FileExistsError:
+        print("❌ A folder in the destination directory is preventing the hashing procedure. Make sure it's empty before trying again.")
+        exit(0)
 
 duplicating()
 hashing()
+
+
+end_time = datetime.now()
+print(f"All processes finished with execution time of {end_time - start_time}")

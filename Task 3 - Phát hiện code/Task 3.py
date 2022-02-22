@@ -1,15 +1,27 @@
 # Task 3 - Detecting code snippet
 
 import os
+import logging
+from datetime import datetime
 
+start_time = datetime.now()
 target_folder = r"C:\Users\Admin\Documents\Hashed Folders"
 target_code = {
     "A": "#define int long long",
     "B": "lmao"
 }
-print("Possible results:")
+
+# File logging
+logging.basicConfig(
+    filename = 'log.txt', 
+    filemode = 'w',
+    format = '[%(asctime)s] %(message)s', 
+    datefmt ='%d/%b/%y %H:%M:%S'
+)
+
+logging.warning("Possible results:")
 for participant in target_code:
-    print(f"{participant}: ", end = "")
+    msg = f"{participant}: "
     code_snippet = target_code[participant]
     for root, dir, files in os.walk(target_folder):
         # root == target_folder
@@ -22,8 +34,13 @@ for participant in target_code:
             with open(f"{root}\{file}", encoding = "utf-8") as f:
                 content = f.read()
                 if code_snippet in content:
-                    print(participant_file_name, end = ", ")
+                    msg += f"{participant_file_name}, "
                     break 
+        
+    if msg[-2:] == ", ": msg = msg[:-2]
+    logging.warning(msg)
 
-    print()
+print("✓ Results logged in log.txt")
 
+end_time = datetime.now()
+print(f"All processes finished with execution time of {end_time - start_time}")
